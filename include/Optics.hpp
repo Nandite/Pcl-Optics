@@ -42,10 +42,10 @@ struct ReachabilityDistance {
    * @param reachabilityDistance Reachability distance of the point.
    */
   ReachabilityDistance(const std::size_t pointIndex, const double reachabilityDistance)
-      : pointIndex(pointIndex), reachabilityDistance(reachabilityDistance) {}
+      : mPointIndex(pointIndex), mReachabilityDistance(reachabilityDistance) {}
 
-  std::size_t pointIndex;
-  double reachabilityDistance;
+  std::size_t mPointIndex;
+  double mReachabilityDistance;
 };
 
 /**
@@ -60,9 +60,10 @@ struct ReachabilityDistance {
  *   reachability distance of rhs, else False.
  */
 inline bool operator<(const ReachabilityDistance& lhs, const ReachabilityDistance& rhs) {
-  return (lhs.reachabilityDistance <= rhs.reachabilityDistance && lhs.reachabilityDistance >= rhs.reachabilityDistance)
-             ? (lhs.pointIndex < rhs.pointIndex)
-             : (lhs.reachabilityDistance < rhs.reachabilityDistance);
+  return (lhs.mReachabilityDistance <= rhs.mReachabilityDistance &&
+          lhs.mReachabilityDistance >= rhs.mReachabilityDistance)
+             ? (lhs.mPointIndex < rhs.mPointIndex)
+             : (lhs.mReachabilityDistance < rhs.mReachabilityDistance);
 }
 
 /**
@@ -74,9 +75,9 @@ inline bool operator<(const ReachabilityDistance& lhs, const ReachabilityDistanc
  * - False otherwise.
  */
 inline bool operator==(const ReachabilityDistance& lhs, const ReachabilityDistance& rhs) {
-  return (lhs.reachabilityDistance <= rhs.reachabilityDistance &&
-          lhs.reachabilityDistance >= rhs.reachabilityDistance) &&
-         (lhs.pointIndex == rhs.pointIndex);
+  return (lhs.mReachabilityDistance <= rhs.mReachabilityDistance &&
+          lhs.mReachabilityDistance >= rhs.mReachabilityDistance) &&
+         (lhs.mPointIndex == rhs.mPointIndex);
 }
 
 namespace internals {
@@ -313,16 +314,16 @@ void expandCluster(const PointT& point, const typename pcl::PointCloud<PointT>::
  */
 bool getClusterIndices(const std::vector<Optics::ReachabilityDistance>& reachabilityDistances,
                        const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
-  if (reachabilityDistances.front().reachabilityDistance >= 0.0) {
+  if (reachabilityDistances.front().mReachabilityDistance >= 0.0) {
     return false;
   }
   for (const auto& r : reachabilityDistances) {
-    if (r.reachabilityDistance < 0.0 || r.reachabilityDistance >= reachabilityThreshold) {
+    if (r.mReachabilityDistance < 0.0 || r.mReachabilityDistance >= reachabilityThreshold) {
       pcl::PointIndicesPtr indicesPtr(new pcl::PointIndices);
-      indicesPtr->indices.push_back(r.pointIndex);
+      indicesPtr->indices.push_back(r.mPointIndex);
       indices.push_back(indicesPtr);
     } else {
-      indices.back()->indices.push_back(r.pointIndex);
+      indices.back()->indices.push_back(r.mPointIndex);
     }
   }
   return true;
@@ -391,18 +392,18 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
     while (!seeds.empty()) {
       Optics::ReachabilityDistance s = *seeds.begin();
       seeds.erase(seeds.begin());
-      if (processed[s.pointIndex]) {
+      if (processed[s.mPointIndex]) {
         return false;
       }
-      processed[s.pointIndex] = true;
-      orderedList.push_back(s.pointIndex);
-      const auto sNeighborIndices = neighbors[s.pointIndex];
+      processed[s.mPointIndex] = true;
+      orderedList.push_back(s.mPointIndex);
+      const auto sNeighborIndices = neighbors[s.mPointIndex];
       double sCoreDistance = std::numeric_limits<double>::max();
-      if (!Optics::internals::computeCoreDistance<PointT>((*source)[s.pointIndex], source, sNeighborIndices, minPts,
+      if (!Optics::internals::computeCoreDistance<PointT>((*source)[s.mPointIndex], source, sNeighborIndices, minPts,
                                                           sCoreDistance)) {
         continue;
       }
-      Optics::internals::expandCluster((*source)[s.pointIndex], source, sNeighborIndices, sCoreDistance, processed,
+      Optics::internals::expandCluster((*source)[s.mPointIndex], source, sNeighborIndices, sCoreDistance, processed,
                                        reachability, seeds);
     }
   }
