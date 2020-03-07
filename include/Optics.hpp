@@ -312,8 +312,8 @@ void expandCluster(const PointT& point, const typename pcl::PointCloud<PointT>::
  * @param indices Sequence of index containers, each one containing the indices of a single cluster of points.
  * @return True if the clusters can be retrieved and formed, False otherwise.
  */
-bool getClusterIndices(const std::vector<Optics::ReachabilityDistance>& reachabilityDistances,
-                       const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
+inline bool getClusterIndices(const std::vector<Optics::ReachabilityDistance>& reachabilityDistances,
+                              const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
   if (reachabilityDistances.front().mReachabilityDistance >= 0.0) {
     return false;
   }
