@@ -59,7 +59,7 @@ struct ReachabilityDistance {
  * - Otherwise, True if the reachability distance of lhs is strictly less than the
  *   reachability distance of rhs, else False.
  */
-inline bool operator<(const ReachabilityDistance& lhs, const ReachabilityDistance& rhs) {
+inline bool operator<(const ReachabilityDistance &lhs, const ReachabilityDistance &rhs) {
   return (lhs.mReachabilityDistance <= rhs.mReachabilityDistance &&
           lhs.mReachabilityDistance >= rhs.mReachabilityDistance)
              ? (lhs.mPointIndex < rhs.mPointIndex)
@@ -74,7 +74,7 @@ inline bool operator<(const ReachabilityDistance& lhs, const ReachabilityDistanc
  * - True if the reachability distance fields are equals and the index fields are also equals
  * - False otherwise.
  */
-inline bool operator==(const ReachabilityDistance& lhs, const ReachabilityDistance& rhs) {
+inline bool operator==(const ReachabilityDistance &lhs, const ReachabilityDistance &rhs) {
   return (lhs.mReachabilityDistance <= rhs.mReachabilityDistance &&
           lhs.mReachabilityDistance >= rhs.mReachabilityDistance) &&
          (lhs.mPointIndex == rhs.mPointIndex);
@@ -92,7 +92,7 @@ namespace internals {
  * False otherwise.
  */
 template <class T>
-bool dereferenceLess(T const* l, T const* r) {
+bool dereferenceLess(T const *l, T const *r) {
   return *l < *r;
 }
 
@@ -105,8 +105,8 @@ bool dereferenceLess(T const* l, T const* r) {
  * @return True if every values in the vector are different, False otherwise.
  */
 template <class T>
-bool isUnique(std::vector<T> const& x) {
-  std::vector<T const*> pointers;
+bool isUnique(std::vector<T> const &x) {
+  std::vector<T const *> pointers;
   pointers.reserve(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     pointers.push_back(&x[i]);
@@ -137,7 +137,7 @@ struct isLessByStruct {
    * @return True if f(x) < f(y), False otherwise.
    */
   template <typename T>
-  bool operator()(const T& x, const T& y) {
+  bool operator()(const T &x, const T &y) {
     return transformation(x) < transformation(y);
   }
 
@@ -156,7 +156,7 @@ struct isLessByStruct {
  * @return The nth largest element of the sequence.
  */
 template <typename Compare, typename Container, typename T = typename Container::value_type>
-T nthElementBy(Compare comp, const std::size_t n, const Container& xs) {
+T nthElementBy(Compare comp, const std::size_t n, const Container &xs) {
   assert(n < xs.size());
   auto result = xs;
   auto nth = std::begin(result);
@@ -176,7 +176,7 @@ T nthElementBy(Compare comp, const std::size_t n, const Container& xs) {
  * @return The nth largest element of the sequence.
  */
 template <typename F, typename Container, typename T = typename Container::value_type>
-T nthLargestElementOn(F f, const std::size_t n, const Container& xs) {
+T nthLargestElementOn(F f, const std::size_t n, const Container &xs) {
   return nthElementBy(isLessByStruct<F>(f), n, xs);
 }
 
@@ -187,12 +187,12 @@ T nthLargestElementOn(F f, const std::size_t n, const Container& xs) {
  * @return The min and max point of the box.
  */
 template <typename PointT>
-std::pair<PointT, PointT> boundingBox(const typename pcl::PointCloud<PointT>::Ptr& points) {
+std::pair<PointT, PointT> boundingBox(const typename pcl::PointCloud<PointT>::Ptr &points) {
   assert(!points->empty());
   PointT min((*points)[0]);
   PointT max((*points)[1]);
 
-  for (const auto& p : *points) {
+  for (const auto &p : *points) {
     min.x = p.x < min.x ? p.x : min.x;
     max.x = p.x > max.x ? p.x : max.x;
 
@@ -207,39 +207,6 @@ std::pair<PointT, PointT> boundingBox(const typename pcl::PointCloud<PointT>::Pt
 }
 
 /**
- * @brief Perform an estimation of a epsilon to be used as a parameter to the Optics algorithm for a given input
- * cloud of point. Large values of epsilon can result in longer execution time (O(n^2) in worst case) as each
- * neighborhood query could return the entire database. Low value of epsilon could on the other side causes
- * the reachability and core distance to be undefined if the clusters are not sufficiently dense. This method is
- * a heuristic which attempt to find sufficiently large value of epsilon. It does so by make the assumption that
- * the points are randomly distributed within the space DS and uses the K-Nearest Neighbors (KNN) distance to determine
- * an epsilon which is the radius of the 3-d dimensional hypersphere S in the space DS such as all the k points
- * (k = minPts) lies within S.
- * @tparam PointT Type of pcl points of the cloud to make clusters from.
- * @param points The cloud to compute an epsilon estimation for.
- * @param minPts Minimal number of point per cluster.
- * @return An estimation for the epsilon parameter or zero if the cloud size is less than or equal to 1.
- */
-template <typename PointT>
-double epsilonEstimation(const typename pcl::PointCloud<PointT>::Ptr& points, const std::size_t minPts) {
-  const size_t size = points->size();
-
-  if (size <= 1) {
-    return 0;
-  }
-
-  const double dimension = 3;
-  const auto space = Optics::internals::boundingBox<PointT>(points);
-  const double spaceVolume = std::abs(double(space.second.x - space.first.x)) *
-                             std::abs(double(space.second.y - space.first.y)) *
-                             std::abs(double(space.second.z - space.first.z));
-
-  const double spacePerMinPtsPoints = (spaceVolume / static_cast<double>(size)) * static_cast<double>(minPts);
-  const double nDimUnitBallVol = std::sqrt(std::pow(M_PI, dimension)) / std::tgamma(dimension / 2.0 + 1.0);
-  return std::pow(spacePerMinPtsPoints / nDimUnitBallVol, 1.0 / dimension);
-}
-
-/**
  * @brief Compute the core distance of a point from the input cloud. The core distance is the minimum radius distance
  * needed to classify a point as a core point.
  * @tparam PointT Type of pcl points of the cloud to make clusters from.
@@ -251,14 +218,14 @@ double epsilonEstimation(const typename pcl::PointCloud<PointT>::Ptr& points, co
  * @return True if the core distance of the point is defined, false otherwise.
  */
 template <typename PointT>
-bool computeCoreDistance(const PointT& point, const typename pcl::PointCloud<PointT>::Ptr& points,
-                         const std::vector<int>& neighborIndices, std::size_t minPts, double& coreDistance) {
+bool computeCoreDistance(const PointT &point, const typename pcl::PointCloud<PointT>::Ptr &points,
+                         const std::vector<int> &neighborIndices, std::size_t minPts, double &coreDistance) {
   if (neighborIndices.size() < minPts) {
     return false;
   }
 
   auto core_elem_idx = nthLargestElementOn(
-      [&points, &point](const std::size_t& idx) -> double {
+      [&points, &point](const std::size_t &idx) -> double {
         return pcl::geometry::squaredDistance(point, (*points)[idx]);
       },
       minPts - 1, neighborIndices);
@@ -279,10 +246,10 @@ bool computeCoreDistance(const PointT& point, const typename pcl::PointCloud<Poi
  * @param seeds Sequence into which new points found through the expansion are inserted for future processing.
  */
 template <typename PointT>
-void expandCluster(const PointT& point, const typename pcl::PointCloud<PointT>::Ptr& points,
-                   const std::vector<int>& neighborIndices, double coreDistance, const std::vector<bool>& processed,
-                   std::vector<double>& reachability, std::set<Optics::ReachabilityDistance>& seeds) {
-  for (const auto& neighborIndex : neighborIndices) {
+void expandCluster(const PointT &point, const typename pcl::PointCloud<PointT>::Ptr &points,
+                   const std::vector<int> &neighborIndices, double coreDistance, const std::vector<bool> &processed,
+                   std::vector<double> &reachability, std::set<Optics::ReachabilityDistance> &seeds) {
+  for (const auto &neighborIndex : neighborIndices) {
     if (processed[neighborIndex]) {
       continue;
     }
@@ -304,6 +271,71 @@ void expandCluster(const PointT& point, const typename pcl::PointCloud<PointT>::
 }  // namespace internals
 
 /**
+ * @brief Perform an estimation of a epsilon to be used as a parameter to the Optics algorithm for a given input
+ * cloud of point. Large values of epsilon can result in longer execution time (O(n^2) in worst case) as each
+ * neighborhood query could return the entire database. Low value of epsilon could on the other side causes
+ * the reachability and core distance to be undefined if the clusters are not sufficiently dense. This method is
+ * a heuristic which attempt to find sufficiently large value of epsilon. It does so by make the assumption that
+ * the points are randomly distributed within the space DS and uses the K-Nearest Neighbors (KNN) distance to determine
+ * an epsilon which is the radius of the 3-d dimensional hypersphere S in the space DS such as all the k points
+ * (k = minPts) lies within S.
+ * @tparam PointT Type of pcl points of the cloud to make clusters from.
+ * @param points The cloud to compute an epsilon estimation for.
+ * @param minPts Minimal number of point per cluster.
+ * @return An estimation for the epsilon parameter or zero if the cloud size is less than or equal to 1.
+ */
+template <typename PointT>
+double epsilonEstimation(const typename pcl::PointCloud<PointT>::Ptr &points, const std::size_t minPts) {
+  const size_t size = points->size();
+
+  if (size <= 1) {
+    return 0;
+  }
+
+  const double dimension = 3;
+  const auto space = Optics::internals::boundingBox<PointT>(points);
+  const double spaceVolume = std::abs(double(space.second.x - space.first.x)) *
+                             std::abs(double(space.second.y - space.first.y)) *
+                             std::abs(double(space.second.z - space.first.z));
+
+  const double spacePerMinPtsPoints = (spaceVolume / static_cast<double>(size)) * static_cast<double>(minPts);
+  const double nDimUnitBallVol = std::sqrt(std::pow(M_PI, dimension)) / std::tgamma(dimension / 2.0 + 1.0);
+  return std::pow(spacePerMinPtsPoints / nDimUnitBallVol, 1.0 / dimension);
+}
+
+/**
+ * @brief Perform an estimation of a epsilon to be used as a parameter to the Optics algorithm for a given input
+ * 2 dimensions cloud of point. Large values of epsilon can result in longer execution time (O(n^2) in worst case)
+ * as each neighborhood query could return the entire database. Low value of epsilon could on the other side causes
+ * the reachability and core distance to be undefined if the clusters are not sufficiently dense. This method is
+ * a heuristic which attempt to find sufficiently large value of epsilon. It does so by make the assumption that
+ * the points are randomly distributed within the space DS and uses the K-Nearest Neighbors (KNN) distance to determine
+ * an epsilon which is the radius of the 2-d dimensional hypersphere S in the space DS such as all the k points
+ * (k = minPts) lies within S.
+ * @tparam PointT Type of pcl points of the cloud to make clusters from.
+ * @param points The cloud to compute an epsilon estimation for.
+ * @param minPts Minimal number of point per cluster.
+ * @return An estimation for the epsilon parameter or zero if the cloud size is less than or equal to 1.
+ */
+template <typename PointT>
+double epsilon2dEstimation(const typename pcl::PointCloud<PointT>::Ptr &points, const std::size_t minPts) {
+  const size_t size = points->size();
+
+  if (size <= 1) {
+    return 0;
+  }
+
+  const double dimension = 2;
+  const auto space = Optics::internals::boundingBox<PointT>(points);
+  const double spaceVolume =
+      std::abs(double(space.second.x - space.first.x)) * std::abs(double(space.second.y - space.first.y));
+
+  const double spacePerMinPtsPoints = (spaceVolume / static_cast<double>(size)) * static_cast<double>(minPts);
+  const double nDimUnitBallVol = std::sqrt(std::pow(M_PI, dimension)) / std::tgamma(dimension / 2.0 + 1.0);
+  return std::pow(spacePerMinPtsPoints / nDimUnitBallVol, 1.0 / dimension);
+}
+
+/**
  * @brief Given an ordered sequence of reachability distances for a given input cloud, this method outputs a set
  * of indices sequence, each one containing the indices of all point belonging to a cluster.
  * @param reachabilityDistances Reachability distances computed for a given cloud of point.
@@ -312,12 +344,12 @@ void expandCluster(const PointT& point, const typename pcl::PointCloud<PointT>::
  * @param indices Sequence of index containers, each one containing the indices of a single cluster of points.
  * @return True if the clusters can be retrieved and formed, False otherwise.
  */
-inline bool getClusterIndices(const std::vector<Optics::ReachabilityDistance>& reachabilityDistances,
-                              const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
+inline bool getClusterIndices(const std::vector<Optics::ReachabilityDistance> &reachabilityDistances,
+                              const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr> &indices) {
   if (reachabilityDistances.front().mReachabilityDistance >= 0.0) {
     return false;
   }
-  for (const auto& r : reachabilityDistances) {
+  for (const auto &r : reachabilityDistances) {
     if (r.mReachabilityDistance < 0.0 || r.mReachabilityDistance >= reachabilityThreshold) {
       pcl::PointIndicesPtr indicesPtr(new pcl::PointIndices);
       indicesPtr->indices.push_back(r.mPointIndex);
@@ -340,8 +372,8 @@ inline bool getClusterIndices(const std::vector<Optics::ReachabilityDistance>& r
  * @return True if the reachability distance have been computed correctly for the entire cloud, False otherwise.
  */
 template <typename PointT>
-bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& source, const std::size_t minPts,
-                                  std::vector<Optics::ReachabilityDistance>& distances, const double epsilon) {
+bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr &source, const std::size_t minPts,
+                                  std::vector<Optics::ReachabilityDistance> &distances, const double epsilon) {
   const unsigned int sourceSize = source->size();
 
   if (sourceSize < 2) {
@@ -349,6 +381,7 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
   }
 
   if (epsilon <= 0.0f) {
+    std::cerr << "Bad epsilon" << std::endl;
     return false;
   }
 
@@ -363,7 +396,7 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
   {
     std::vector<float> placeHolder;
     placeHolder.reserve(sourceSize);
-    std::for_each(source->begin(), source->end(), [epsilon, &placeHolder, &kdTree, &neighbors](const PointT& point) {
+    std::for_each(source->begin(), source->end(), [epsilon, &placeHolder, &kdTree, &neighbors](const PointT &point) {
       neighbors.emplace_back(std::vector<int>());
       kdTree.radiusSearch(point, epsilon, neighbors.back(), placeHolder);
     });
@@ -393,7 +426,7 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
       Optics::ReachabilityDistance s = *seeds.begin();
       seeds.erase(seeds.begin());
       if (processed[s.mPointIndex]) {
-        return false;
+        continue;
       }
       processed[s.mPointIndex] = true;
       orderedList.push_back(s.mPointIndex);
@@ -429,10 +462,10 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
  * @return True if the reachability distance have been computed correctly for the entire cloud, False otherwise.
  */
 template <typename PointT>
-bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& source, const std::size_t minPts,
-                                  std::vector<Optics::ReachabilityDistance>& distances) {
+bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr &source, const std::size_t minPts,
+                                  std::vector<Optics::ReachabilityDistance> &distances) {
   return computeReachabilityDistances<PointT>(source, minPts, distances,
-                                              Optics::internals::epsilonEstimation<PointT>(source, minPts));
+                                              Optics::epsilonEstimation<PointT>(source, minPts));
 }
 
 /**
@@ -447,8 +480,8 @@ bool computeReachabilityDistances(const typename pcl::PointCloud<PointT>::Ptr& s
  * @return True if the clusters have been correctly generated from the given source, False otherwise.
  */
 template <typename PointT>
-bool optics(const typename pcl::PointCloud<PointT>::Ptr& source, const std::size_t minPts,
-            const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
+bool optics(const typename pcl::PointCloud<PointT>::Ptr &source, const std::size_t minPts,
+            const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr> &indices) {
   indices.clear();
   indices.reserve(source->size());
   std::vector<Optics::ReachabilityDistance> distances;
@@ -471,8 +504,8 @@ bool optics(const typename pcl::PointCloud<PointT>::Ptr& source, const std::size
  * @return True if the clusters have been correctly generated from the given source, False otherwise.
  */
 template <typename PointT>
-bool optics(const typename pcl::PointCloud<PointT>::Ptr& source, const double epsilon, const std::size_t minPts,
-            const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr>& indices) {
+bool optics(const typename pcl::PointCloud<PointT>::Ptr &source, const double epsilon, const std::size_t minPts,
+            const double reachabilityThreshold, std::vector<pcl::PointIndicesPtr> &indices) {
   indices.clear();
   indices.reserve(source->size());
   std::vector<Optics::ReachabilityDistance> distances;
