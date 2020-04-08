@@ -42,7 +42,7 @@ You should get the following output into the pcl visualizer:
 
 ![libjson-rpc-cpp logo](resources/clusters-example.png)
 
-Each color represent a different density cluster. 
+Each color represents a different density cluster. 
 
 ## Dependencies
 
