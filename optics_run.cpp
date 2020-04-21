@@ -64,7 +64,7 @@ int main(int, char**) {
   while (filteredCloud->points.size() > 0.3 * nr_points) {
     seg.setInputCloud(filteredCloud);
     seg.segment(*inliers, *coefficients);
-    if (inliers->indices.size() == 0) {
+    if (inliers->indices.empty()) {
       std::cout << "Could not estimate a planar model for the given dataset." << std::endl;
       break;
     }
