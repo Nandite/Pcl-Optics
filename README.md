@@ -34,8 +34,9 @@ for (const auto& cluster : clusters) {
 You can compile and execute the example program provided:
 
 ```sh
-cmake . && make
-./Pcl_Optics
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+./Pcl_Optics ../table_scene_lms400.pcd
 ```
 
 You should get the following output into the pcl visualizer:

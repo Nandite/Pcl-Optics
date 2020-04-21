@@ -32,14 +32,21 @@
 #include <random>
 #include "Optics.hpp"
 
-int main(int, char**) {
+int main(int argc, char* argv[]) {
+
+    if(argc < 2)
+    {
+        std::cerr << "Usage : " << argv[0] << " <filename>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
   std::mt19937 t(std::chrono::system_clock::now().time_since_epoch().count());
   std::uniform_int_distribution<unsigned int> rgb(1, 255);
 
   pcl::PCDReader reader;
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>),
       bufferCloud(new pcl::PointCloud<pcl::PointXYZ>);
-  reader.read("table_scene_lms400.pcd", *cloud);
+  reader.read(argv[1], *cloud);
   std::cout << "PointCloud before filtering has: " << cloud->points.size() << " data points." << std::endl;
 
   pcl::VoxelGrid<pcl::PointXYZ> vg;
