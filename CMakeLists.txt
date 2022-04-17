@@ -16,14 +16,8 @@ add_definitions(${PCL_DEFINITIONS})
 
 include_directories(include)
 
-add_executable(Pcl_Optics
-        include/Optics.hpp
-        optics_run.cpp)
-target_link_libraries(Pcl_Optics
-        ${PCL_LIBRARIES})
+add_executable(Pcl_Optics include examples/optics_run.cpp)
+target_link_libraries(Pcl_Optics ${PCL_LIBRARIES})
 
-add_executable(Pcl_Optics_With_Indices
-        include/Optics.hpp
-        optics_indices_run.cpp)
-target_link_libraries(Pcl_Optics_With_Indices
-        ${PCL_LIBRARIES})
+add_executable(Pcl_Optics_With_Indices include examples/optics_indices_run.cpp)
+target_link_libraries(Pcl_Optics_With_Indices ${PCL_LIBRARIES})
