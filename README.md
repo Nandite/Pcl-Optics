@@ -36,6 +36,7 @@ You can compile and execute the example program provided:
 ```sh
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
+make
 ./Pcl_Optics ../table_scene_lms400.pcd
 ```
 
