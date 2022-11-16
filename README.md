@@ -76,7 +76,7 @@ Then copy the [Optics](include/Optics.hpp) header file located into the include 
 You will find into the [resources](resources) directory a publication from [Mihael Ankerst, Markus M. Breunig,
 Hans-Peter Kriegel and Jörg Sander](resources/OPTICS.pdf) succinctly explaining the OPTICS algorithm.
 
-There is also an excelent paper from [Izabela Anna Wowczko](https://www.academia.edu/8142139/Density_Based_Clustering_with_DBSCAN_and_OPTICS_-_Literature_Review)
+There is also an excellent paper from [Izabela Anna Wowczko](https://www.academia.edu/8142139/Density_Based_Clustering_with_DBSCAN_and_OPTICS_-_Literature_Review)
 of the Institute of Technology Blanchardstown explaining the principle of the algorithm.
 
 ## Feedback
