@@ -12,7 +12,7 @@ Pcl-Optics
 OPTICS is an algorithm for finding density-based clusters in spatial data. It was presented by Mihael Ankerst, 
 Markus M. Breunig, Hans-Peter Kriegel and Jörg Sander in 1999.
 
-The goal of this repository is to provides a C++ implementation of the algorithm compatible with the 
+The goal of this repository is to provide a C++ implementation of the algorithm compatible with the 
 cloud and points of the Point Cloud Library ([PCL](http://www.pointclouds.org/)) project, without any further 
 dependencies than those required by the PCL. The metric used by the algorithm to estimate density is the euclidean
 distance in a 3D space. This work is derived from the implementation made by 
