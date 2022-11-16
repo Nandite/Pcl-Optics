@@ -1,6 +1,14 @@
 Pcl-Optics
 ===============
 
+[![][license-image]][license]
+![][platform-image]
+
+[license-image]: https://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license]: https://github.com/Nandite/PclWalkerViewer/blob/master/LICENSE
+
+[platform-image]: https://img.shields.io/badge/platorms-linux64%20%7C%20osx%20%7C%20windows-lightgrey?style=flat-square
+
 OPTICS is an algorithm for finding density-based clusters in spatial data. It was presented by Mihael Ankerst, 
 Markus M. Breunig, Hans-Peter Kriegel and Jörg Sander in 1999.
 
